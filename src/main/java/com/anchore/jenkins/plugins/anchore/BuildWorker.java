@@ -498,7 +498,7 @@ public class BuildWorker {
       try {
         JSONObject securityJson = new JSONObject();
         JSONArray columnsJson = new JSONArray();
-        for (String column : Arrays.asList("Tag", "CVE ID", "Severity", "Vulnerability Package", "Fix Available", "URL")) {
+        for (String column : Arrays.asList("Tag", "CVE ID", "Severity", "Vulnerability Package", "Path", "Fix Available", "URL")) {
           JSONObject columnJson = new JSONObject();
           columnJson.put("title", column);
           columnsJson.add(columnJson);
@@ -546,7 +546,7 @@ public class BuildWorker {
                   JSONArray vulnArray = new JSONArray();
                   vulnArray.addAll(Arrays
                       .asList(input, vulnJson.getString("vuln"), vulnJson.getString("severity"), vulnJson.getString("package"),
-                          vulnJson.getString("fix"),
+                          vulnJson.getString("package_path"), vulnJson.getString("fix"),
                           "<a href='" + vulnJson.getString("url") + "'>" + vulnJson.getString("url") + "</a>"));
                   dataJson.add(vulnArray);
                 }
