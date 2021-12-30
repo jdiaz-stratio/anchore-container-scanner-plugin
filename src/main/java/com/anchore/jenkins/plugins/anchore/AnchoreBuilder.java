@@ -25,7 +25,8 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
-import javax.annotation.Nonnull;
+
+import io.jenkins.plugins.anchore.checks.AnchoreChecksPublisher;
 import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
 import net.sf.json.JSONObject;
@@ -177,7 +178,7 @@ public class AnchoreBuilder extends Builder implements SimpleBuildStep {
   }
 
   @Override
-  public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, @Nonnull TaskListener listener)
+  public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener)
       throws InterruptedException, IOException {
 
     LOG.warning(
@@ -266,6 +267,11 @@ public class AnchoreBuilder extends Builder implements SimpleBuildStep {
       } else {
         console.logInfo("Marking Anchore Container Image Scanner step as successful, no final result");
       }
+      /* GitHub check */
+      console.logDebug("Attempting to publish GitHub check");
+      AnchoreChecksPublisher publisher = new AnchoreChecksPublisher(run, "Anchore Scan", finalAction);
+      publisher.publishChecks(listener);
+      console.logDebug("Finished publish attempt of GitHub check");
 
     } catch (Exception e) {
       if (failedByGate) {
