@@ -257,6 +257,10 @@ public class AnchoreBuilder extends Builder implements SimpleBuildStep {
 
       /* Evaluate result of step based on gate action */
       if (null != finalAction) {
+        console.logDebug("Attempting to publish GitHub check");
+        AnchoreChecksPublisher publisher = new AnchoreChecksPublisher(run, "Anchore Scan", finalAction);
+        publisher.publishChecks(listener);
+        console.logDebug("Finished publish attempt of GitHub check");
         if (config.getBailOnFail() && (GATE_ACTION.STOP.equals(finalAction) || GATE_ACTION.FAIL.equals(finalAction))) {
           console.logWarn("Failing Anchore Container Image Scanner Plugin step due to final result " + finalAction);
           failedByGate = true;
@@ -267,11 +271,6 @@ public class AnchoreBuilder extends Builder implements SimpleBuildStep {
       } else {
         console.logInfo("Marking Anchore Container Image Scanner step as successful, no final result");
       }
-      /* GitHub check */
-      console.logDebug("Attempting to publish GitHub check");
-      AnchoreChecksPublisher publisher = new AnchoreChecksPublisher(run, "Anchore Scan", finalAction);
-      publisher.publishChecks(listener);
-      console.logDebug("Finished publish attempt of GitHub check");
 
     } catch (Exception e) {
       if (failedByGate) {
